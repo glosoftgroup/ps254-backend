@@ -1,0 +1,97 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% load prices_i18n %}
+{% load materializecss %}
+{% load static %}
+
+{% block title %}
+  {% trans "Sales" %} - {{ block.super }}
+{% endblock %}
+
+{% block body_class %}body-sales{% endblock %}
+
+{% block menu_sales_class %}active{% endblock %}
+
+{% block breadcrumbs %} 
+    <li class="visible-s">{% trans "Discounts" context "Dashboard sales (discounts) list." %}
+    </li>
+ 
+{% endblock %}
+
+{% block menu_discounts_class %} active{% endblock %}
+
+{% block content %}
+  <div class="panel panel-default">
+    <div class='panelbody'>
+    <div class="" style="padding: 8px;">
+      <a href="{% url 'dashboard:sale-add' %}" class="btn btn-primary"  title="{% trans "Add sale" context "Sale (discount) list add button text" %}">
+        {% trans "Add" context "Dashboard add action" %}
+      </a>
+    </div>
+    <div class="table-responsive">
+      <table class="table responsive data-table">
+        <thead>
+          <tr class="bg-primary">
+            <th>
+              {% trans "Name" context "Sale (discount) table header" %}
+            </th>
+            <th>
+              {% trans "Discount" context "Sale (discount) table header" %}
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if sales %}
+            {% for sale in sales %}
+              <tr class="clickable-row" data-href="{% url 'dashboard:sale-update' pk=sale.pk %}">
+                <td class='td'  data-href="{% url 'dashboard:sale-update' pk=sale.pk %}">
+                  {{ sale }}
+                </td>
+                <td class='td' data-href="{% url 'dashboard:sale-update' pk=sale.pk %}">
+                  {{ sale.value }}{{ sale.get_type_display }}
+                </td>
+                <!-- actions -->
+                <td >
+                <span  class="label label-primary">
+                <a href="{% url 'dashboard:discount-detail' pk=sale.pk %}" class="text-white modal-trigger-ajax" data-title="Products in this {{ sale.value}}{{ sale.get_type_display }} Discount" data-href="{% url 'dashboard:discount-detail' pk=sale.pk %}">
+                Detail
+                </a>
+                </span>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td>
+              <span>
+                {% trans "No Discount found" context "Empty sales table message" %}
+              </span>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+  {% include "dashboard/includes/_pagination.html" %}
+  {% include "dashboard/includes/_modal_template.html"  %}
+{% endblock %}
+
+{% block custom_js %}
+<style type="text/css">
+  .clickable-row { cursor: pointer; }
+</style>
+<script type="text/javascript" src="{% static 'backend/js/backend.js' %}"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+      // $(".clickable-row").click(function() {
+      //      window.location = $(this).data("href");
+      //  });
+      $(".td").click(function() {
+            window.location = $(this).data("href");
+        });
+ });
+</script>
+{% endblock %}
