@@ -12,6 +12,7 @@ from ..views import staff_member_required
 
 from ...decorators import permission_decorator, user_trail
 import logging
+import json
 
 debug_logger = logging.getLogger('debug_logger')
 info_logger  = logging.getLogger('info_logger')
@@ -19,12 +20,16 @@ error_logger = logging.getLogger('error_logger')
 
 from django.contrib.auth import get_user_model
 from ...userprofile.models import User
+from notifications.signals import notify
+
 
 def notification_list(request):
     # read users notifications
     notifications = request.user.notifications.unread()
+    print notifications
     users = User.objects.all().order_by('-id')
     ctx = {
+        'deleted':len(notifications.deleted()),
         'notifications':notifications,
         'total_notifications': len(notifications),
         'users':User.objects.all()}
@@ -36,8 +41,17 @@ def notification_list(request):
 def write(request):
     if request.method == 'POST':
         subject = request.POST.get('subject')
-        emailList = request.POST.get('emailList')
+        emailList = json.loads(request.POST.get('emailList'))
         body = request.POST.get('body')
+        for email in emailList:
+        	user = User.objects.filter(email=email['email'])
+        	print('--------')
+        	print('sending email to ')
+        	print(user)
+        	print '--------'
+        	notify.send(request.user, recipient=user, verb=subject,description=body)
+
+        HttpResponse(emailList)
 
 
     ctx = {'users':User.objects.all().order_by('-id')}

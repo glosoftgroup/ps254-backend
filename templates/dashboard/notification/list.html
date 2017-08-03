@@ -1,7 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% load i18n %}
 {% load static %}
-{% load render_bundle from webpack_loader %}
+{% load notifications_tags %} 
 
 
 {% block title %}
@@ -37,7 +37,7 @@
 						</div>
 
 						<div class="category-content">
-							<a href="#" class="btn bg-indigo-400 btn-block">Compose mail</a>
+							<a href="{% url 'dashboard:write' %}" class="btn bg-indigo-400 btn-block">Compose mail</a>
 						</div>
 					</div>
 					<!-- /actions -->
@@ -55,13 +55,13 @@
 						<div class="category-content no-padding">
 							<ul class="navigation navigation-alt navigation-accordion no-padding-bottom">
 								<li class="navigation-header">Folders</li>
-								<li class="active"><a href="#"><i class="icon-drawer-in"></i> Inbox <span class="badge badge-success">32</span></a></li>
+								<li class="active"><a href="#"><i class="icon-drawer-in"></i> Inbox <span class="badge badge-success">{{total_notifications}}</span></a></li>
 								<li><a href="#"><i class="icon-drawer3"></i> Drafts</a></li>
 								<li><a href="#"><i class="icon-drawer-out"></i> Sent mail</a></li>
 								<li><a href="#"><i class="icon-stars"></i> Starred</a></li>
 								<li class="navigation-divider"></li>
 								<li><a href="#"><i class="icon-spam"></i> Spam <span class="badge badge-danger">99+</span></a></li>
-								<li><a href="#"><i class="icon-bin"></i> Trash</a></li>
+								<li><a href="#"><i class="icon-bin"></i> Trash<span class="badge badge-warning">{{deleted}}</span></a></li>
 							</ul>
 						</div>
 					</div>
@@ -77,6 +77,7 @@
 			</div>
 			<!-- /secondary sidebar -->
 
+{% notifications_unread as unread_count %}
 
 			<!-- Main content -->
 			<div class="content-wrapper">
@@ -91,7 +92,7 @@
 							<h6 class="panel-title">My Inbox</h6>
 
 							<div class="heading-elements not-collapsible">
-								<span class="label bg-blue heading-text">{{total_notifications}} new today</span>
+								<span class="label bg-blue heading-text">{{unread_count}} new </span>
 		                	</div>
 						</div>
 
@@ -127,14 +128,14 @@
 						<div class="table-responsive">
 							<table class="table table-inbox">
 								<tbody data-link="row" class="rowlink">
-								{% for notifications in  notification %}
+								{% for notification in  notifications %}
 									<tr class="unread">
 										<td class="table-inbox-checkbox rowlink-skip">
 											<div class="checker"><span><input class="styled" type="checkbox"></span></div>
 										</td>
 										<td class="table-inbox-star rowlink-skip">
 											<a href="http://demo.interface.club/limitless/layout_1/LTR/default/mail_read.html">
-												<i class="icon-star-empty3 text-muted"></i>
+												<i class="icon-star-full2 text-warning-300"></i>
 											</a>
 										</td>
 										<td class="table-inbox-image">
@@ -142,21 +143,18 @@
 										</td>
 										<td class="table-inbox-name">
 											<a href="#">
-												<div class="letter-icon-title text-default">{{notification.text}}</div>
+												<div class="letter-icon-title text-default">{{notification.verb}}</div>
 											</a>
 										</td>
 										<td class="table-inbox-message">
-											<div class="table-inbox-subject">On Tower-hill, as you go down</div>
-											<span class="table-inbox-preview">To the London docks, you 
-may have seen a crippled beggar (or KEDGER, as the sailors say) holding a
- painted board before him, representing the tragic scene in which he 
-lost his leg</span>
+											<div class="table-inbox-subject">{{ notification.verb}}</div>
+											<span class="table-inbox-preview">{{notification.description}}</span>
 										</td>
 										<td class="table-inbox-attachment">
 											<i class="icon-attachment text-muted"></i>
 										</td>
 										<td class="table-inbox-time">
-											11:09 pm
+											{{notification.timestamp}}
 										</td>
 									</tr>
 								{% endfor %}
@@ -177,7 +175,7 @@ lost his leg</span>
 
  <script type="text/javascript" src="{% static 'backend/js/plugins/forms/styling/switch.min.js' %}"></script>
  <script type="text/javascript" src="{% static 'backend/js/pages/mail_list.js' %}"></script>
-{% render_bundle 'dashboard' 'js' %}
+
 
 <script type="text/javascript">
 // IIFE - Immediately Invoked Function Expression

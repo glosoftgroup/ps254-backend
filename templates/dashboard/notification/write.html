@@ -130,13 +130,14 @@
 
 
 <script>
-$(document).ready(function(){
-     // Data
-     var states = [
+var emails = [
     {% for user in users %}
     '{{user.email}}',
     {% endfor %}
     ];
+$(document).ready(function(){
+     // Data
+     
 
     //
     // Typeahead implementation
@@ -174,9 +175,9 @@ $(document).ready(function(){
             minLength: 1
         },
         {
-            name: 'states',
+            name: 'emails',
             displayKey: 'value',
-            source: substringMatcher(states)
+            source: substringMatcher(emails)
         }
     ).bind('typeahead:selected', $.proxy(function (obj, datum) {  
         this.tagsinput('add', datum.value);
@@ -192,7 +193,7 @@ selector1.on('change',function(){
 // ajax
 function sendNotification(emailList,subject,body) {
     var dynamicData = {};
-    dynamicData["emailList"] = emailList;
+    dynamicData["emailList"] = JSON.stringify(emailList);
     dynamicData["subject"] = subject;
     dynamicData["body"] = body;
     dynamicData["csrfmiddlewaretoken"]  = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -229,7 +230,11 @@ sendnot.on('click',function(){
     }
     
     for (var i = 0; i < toSplit.length; i++) {
-        json.push({"email":toSplit[i]});
+        if( emails.indexOf(toSplit[i]) > -1 ) {
+            console.log("success");
+            json.push({"email":toSplit[i]});
+        }
+       
     }
 
     console.log(json);
