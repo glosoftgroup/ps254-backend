@@ -4,7 +4,7 @@ Babel==2.4.0
 BabelDjango==0.2.2
 braintree==3.37.2
 cffi==1.10.0
-cryptography==1.8.1
+cryptography==3.2
 cssselect==1.0.1
 cssutils==1.0.2
 dj-database-url==0.4.2
