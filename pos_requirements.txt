@@ -48,7 +48,7 @@ oauth2==1.9.0.post1
 oauthlib==2.0.2
 olefile==0.44
 packaging==16.8
-Pillow==4.0.0
+Pillow==9.0.0
 premailer==3.0.1
 prices==0.5.9
 promise==2.0.2
